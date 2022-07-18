@@ -73,7 +73,7 @@ export function usePusherChannel(
 
 export function usePusherEvent<MessageType>(
   channel: Channel | undefined,
-  eventName: "score-added",
+  eventName: string,
   callback: (data: MessageType) => void
 ) {
   const stableCallback = useEvent(callback);

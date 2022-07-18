@@ -37,7 +37,7 @@ export const gameRouter = createRouter()
     }),
     async resolve({ ctx, input }) {
       const scoreRecord = {
-        userId: "1",
+        userId: Math.random().toFixed(7),
         value: input.score,
       };
 
