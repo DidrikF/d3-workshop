@@ -1,20 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import {
-  Box,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  styled,
-  Toolbar,
-} from "@mui/material";
+
 import Head from "next/head";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
-
-const drawerWidth = 240;
 
 export default function BaseLayout({
   children,
@@ -31,90 +18,55 @@ export default function BaseLayout({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box sx={{ display: "flex" }}>
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          <Toolbar>
+      <div className="flex items-stretch min-h-screen bg-slate-900 text-white font-mono">
+        <nav className="w-48 border-blue-900 border-r-2">
+          <div className="border-blue-900 border-b-2">
             <NextLink href="/">
-              <StyledImg
+              <img
                 src="/assets/default_200_percent/200-error-offline.png"
+                className="hover:cursor-pointer"
                 width={48}
                 height={48}
                 alt="Logo"
               />
             </NextLink>
-          </Toolbar>
+          </div>
 
-          <Divider />
+          <ul>
+            <Link href="/workshop">Material</Link>
 
-          <List>
-            <Link href="/workshop" label="Material" />
+            <div className="pl-8">
+              <Link href="/workshop/1-intro">Introduction</Link>
+            </div>
 
-            <List component="div" disablePadding>
-              <Link
-                href="/workshop/1-intro"
-                label="Introduction"
-                sx={{ pl: 4 }}
-              />
-            </List>
+            <Link href="/problems" reload>
+              Problems
+            </Link>
+          </ul>
+        </nav>
 
-            <Link href="/problems" label="Problems" reload />
-          </List>
-        </Drawer>
-
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          {children}
-        </Box>
-      </Box>
+        <main className="flex-grow p-8">{children}</main>
+      </div>
     </>
   );
 }
 
-const StyledImg = styled("img")({
-  ":hover": {
-    cursor: "pointer",
-  },
-});
-
-const Link = styled(
-  ({
-    href,
-    label,
-    className,
-    reload,
-  }: {
-    href: string;
-    label: string;
-    className?: string;
-    reload?: boolean;
-  }) => {
-    const { asPath } = useRouter();
-
-    const LinkComponent = !reload ? NextLink : a;
-
-    return (
-      <ListItem disablePadding>
-        <LinkComponent href={href}>
-          <ListItemButton
-            className={className}
-            sx={{ background: asPath === href ? "primary.light" : undefined }}
-          >
-            <ListItemText primary={label} />
-          </ListItemButton>
-        </LinkComponent>
-      </ListItem>
-    );
-  }
-)({});
-
-const a = styled("a")({ width: "100%" });
+const Link: React.FC<{
+  href: string;
+  children: React.ReactNode;
+  reload?: boolean;
+}> = ({ href, children, reload }) => {
+  return (
+    <li>
+      {!reload ? (
+        <NextLink href={href}>
+          <a className={"active:to-blue-400"}>{children}</a>
+        </NextLink>
+      ) : (
+        <a href={href} className={"active:to-blue-400"}>
+          {children}
+        </a>
+      )}
+    </li>
+  );
+};

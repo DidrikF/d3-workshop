@@ -1,24 +1,20 @@
-// src/pages/_app.tsx
 import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import "../styles/globals.css";
 import BaseLayout from "../components/layout/BaseLayout";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { theme } from "../styles/theme";
+
+import "../styles/globals.css";
+import "../components/problems/t-rex-game/styles.css";
 
 const MyApp: AppType = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BaseLayout>
-        <Component {...pageProps} />
-      </BaseLayout>
-    </ThemeProvider>
+    <BaseLayout>
+      <Component {...pageProps} />
+    </BaseLayout>
   );
 };
 

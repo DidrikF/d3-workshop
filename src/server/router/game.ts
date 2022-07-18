@@ -1,5 +1,20 @@
 import { createRouter } from "./context";
-import { z } from "zod";
+import { never, z } from "zod";
+import Pusher from "pusher";
+import { env } from "process";
+
+const pusher = new Pusher({
+  appId: env.PUSHER_APP_ID!,
+  key: env.NEXT_PUBLIC_PUSHER_APP_KEY!,
+  secret: env.PUSHER_APP_SECRET!,
+  cluster: env.NEXT_PUBLIC_PUSHER_APP_CLUSTER!,
+  useTLS: true,
+});
+
+const T_REX_GAME_CHANNEL_ID = "t-rex-game";
+enum TRexGameEvent {
+  ScoreAdded = "score-added",
+}
 
 export const gameRouter = createRouter()
   .query("allScores", {
@@ -21,12 +36,21 @@ export const gameRouter = createRouter()
       score: z.number(),
     }),
     async resolve({ ctx, input }) {
+      const scoreRecord = {
+        userId: "1",
+        value: input.score,
+      };
+
       const result = await ctx.prisma.score.create({
-        data: {
-          userId: "1",
-          value: input.score,
-        },
+        data: scoreRecord,
       });
+
+      pusher.trigger(
+        T_REX_GAME_CHANNEL_ID,
+        TRexGameEvent.ScoreAdded,
+        scoreRecord
+      );
+
       return result;
     },
   });

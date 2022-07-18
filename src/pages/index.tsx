@@ -1,15 +1,5 @@
-import { Typography } from "@mui/material";
 import type { NextPage } from "next";
-import dynamic from "next/dynamic";
 import Head from "next/head";
-import { Suspense } from "react";
-
-import { trpc } from "../utils/trpc";
-
-const TRexGame = dynamic(() => import("../components/t-rex-game"), {
-  ssr: false,
-  suspense: true,
-});
 
 const Home: NextPage = () => {
   return (
@@ -23,9 +13,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Typography component="h1" variant="h4">
-        Welcome to the D3 Workshop!
-      </Typography>
+      <h1>Welcome to the D3 Workshop!</h1>
     </>
   );
 };

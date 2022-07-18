@@ -21,3 +21,10 @@ npx prisma studio
 # Setup for workshop participants
 
 Set username and password in .env...
+
+
+
+# Commands
+
+npx prisma studio 
+pscale connect d3-workshop initial-setup --port 3309
