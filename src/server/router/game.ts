@@ -36,21 +36,24 @@ export const gameRouter = createRouter()
       score: z.number(),
     }),
     async resolve({ ctx, input }) {
-      const scoreRecord = {
-        userId: Math.random().toFixed(7),
-        value: input.score,
-      };
-
       const result = await ctx.prisma.score.create({
-        data: scoreRecord,
+        data: {
+          userId: Math.random().toFixed(7),
+          value: input.score,
+        },
       });
 
-      pusher.trigger(
+      const response = await pusher.trigger(
         T_REX_GAME_CHANNEL_ID,
         TRexGameEvent.ScoreAdded,
-        scoreRecord
+        result
       );
 
-      return result;
+      console.log("prisma res: ", result, "pusher res: ", response);
+
+      return {
+        prisma: result,
+        pusher: response,
+      };
     },
   });
