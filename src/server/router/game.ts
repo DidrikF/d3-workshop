@@ -25,9 +25,9 @@ export const gameRouter = createRouter()
   .query("yourScores", {
     async resolve({ ctx }) {
       return await ctx.prisma.score.findMany({
-        where: {
-          userId: "1",
-        },
+        // where: {
+        //   userId: "1",
+        // },
       });
     },
   })
