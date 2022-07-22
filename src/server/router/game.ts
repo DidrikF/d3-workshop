@@ -1,7 +1,8 @@
-import { createRouter } from "./context";
-import { never, z } from "zod";
+import { createRouter } from "./trpcContext";
+import { z } from "zod";
 import Pusher from "pusher";
 import { env } from "process";
+import { TRPCError } from "@trpc/server";
 
 const pusher = new Pusher({
   appId: env.PUSHER_APP_ID!,
@@ -17,17 +18,51 @@ enum TRexGameEvent {
 }
 
 export const gameRouter = createRouter()
+  .middleware(async ({ ctx, next }) => {
+    if (!ctx.user?.id) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next();
+  })
+  .query("top10Scores", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.score.findMany({
+        include: { user: true },
+        orderBy: { value: "desc" },
+        take: 10,
+      });
+    },
+  })
+  .query("scoreHistory", {
+    async resolve({ ctx }) {
+      return await ctx.prisma.user.findMany({
+        include: {
+          Score: { orderBy: { id: "desc" }, take: 10, include: { user: true } },
+        },
+        take: 10,
+      });
+    },
+  })
   .query("allScores", {
     async resolve({ ctx }) {
-      return await ctx.prisma.score.findMany();
+      return await ctx.prisma.user.findMany({
+        include: {
+          Score: { orderBy: { id: "desc" }, include: { user: true } },
+        },
+        take: 10,
+      });
     },
   })
   .query("yourScores", {
     async resolve({ ctx }) {
+      if (!ctx.user?.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       return await ctx.prisma.score.findMany({
-        // where: {
-        //   userId: "1",
-        // },
+        where: {
+          userId: ctx.user.id,
+        },
       });
     },
   })
@@ -36,24 +71,24 @@ export const gameRouter = createRouter()
       score: z.number(),
     }),
     async resolve({ ctx, input }) {
+      if (!ctx.user?.id) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       const result = await ctx.prisma.score.create({
         data: {
-          userId: Math.random().toFixed(7),
+          userId: ctx.user.id,
           value: input.score,
         },
+        include: { user: true },
       });
 
-      const response = await pusher.trigger(
+      await pusher.trigger(
         T_REX_GAME_CHANNEL_ID,
         TRexGameEvent.ScoreAdded,
         result
       );
 
-      console.log("prisma res: ", result, "pusher res: ", response);
-
-      return {
-        prisma: result,
-        pusher: response,
-      };
+      return result;
     },
   });

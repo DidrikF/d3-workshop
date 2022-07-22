@@ -3,45 +3,62 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { trpc } from "../../utils/trpc";
 import TRexGame from "./t-rex-game";
-import { AllScoresChart } from "./charts/AllScoresChart";
-import { MyHistoryChart } from "./charts/MyHistoryChart";
-import { Top20Chart } from "./charts/Top20Chart";
+import Top10Chart from "./1-top-10-chart/index";
+import HistoryChart from "./2-history-chart";
+import DistributionChart from "./3-distribution-chart";
 
 export enum TabName {
-  MyHistory = "my-history",
-  Top20 = "top-20",
-  AllScores = "all-scores",
+  Top10 = "top-10",
+  History = "history",
+  Distribution = "distribution",
 }
 
 const Tab: React.FC<{ children: React.ReactNode; value: TabName }> = ({
   children,
   value,
 }) => {
+  const router = useRouter();
+  const tabHref = `/problems/${value}`;
+
+  console.log(router.asPath);
+
   return (
-    <Link href={{ pathname: "/problems", query: { tab: value } }}>
-      <a className={"active:to-blue-400"}>{children}</a>
+    <Link href={tabHref}>
+      <a
+        className={`underline transition-colors active:text-blue-400 ${
+          router.asPath === tabHref ? "text-blue-500" : "hover:text-blue-300"
+        }`}
+      >
+        {children}
+      </a>
     </Link>
   );
 };
 
 const ProblemsPageContent: NextPage = () => {
   const { query } = useRouter();
+  const tab = query.tab?.[0];
 
   return (
     <>
       <TRexGame />
 
-      <div className="border-b-gray-900" />
+      <div className="bg-slate-400 h-1 rounded mt-2" />
 
-      <nav aria-label="Select workshop task" className="flex gap-4">
-        <Tab value={TabName.MyHistory}>My score history</Tab>
-        <Tab value={TabName.Top20}>Top 20 scores</Tab>
-        <Tab value={TabName.AllScores}>All scores</Tab>
+      <nav
+        aria-label="Select workshop task"
+        className="flex justify-center gap-6 py-8"
+      >
+        <Tab value={TabName.Top10}>Top 10 scores chart</Tab>
+        <Tab value={TabName.History}>Score history chart</Tab>
+        <Tab value={TabName.Distribution}>Score distribution chart</Tab>
       </nav>
 
-      {query.tab === TabName.MyHistory && <MyHistoryChart />}
-      {query.tab === TabName.Top20 && <Top20Chart />}
-      {query.tab === TabName.AllScores && <AllScoresChart />}
+      <div>
+        {tab === TabName.Top10 && <Top10Chart />}
+        {tab === TabName.History && <HistoryChart />}
+        {tab === TabName.Distribution && <DistributionChart />}
+      </div>
     </>
   );
 };

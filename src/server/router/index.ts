@@ -1,5 +1,5 @@
 // src/server/router/index.ts
-import { createRouter } from "./context";
+import { createRouter } from "./trpcContext";
 import superjson from "superjson";
 
 import { gameRouter } from "./game";
