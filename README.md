@@ -29,3 +29,12 @@ Set username and password in .env...
 npx prisma studio 
 pscale connect d3-workshop initial-setup --port 3309
 
+
+https://github.com/d3/d3/wiki/#insert
+
+https://github.com/d3/d3-scale-chromatic
+
+https://www.d3indepth.com/datajoins/
+
+https://github.com/pbeshai/d3-interpolate-path
+

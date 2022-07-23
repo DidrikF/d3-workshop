@@ -5,11 +5,11 @@ import { useEffect } from "react";
 import { useEvent } from "../hooks/useEvent";
 import { pick } from "lodash";
 
-const pusher_key = process.env.NEXT_PUBLIC_PUSHER_APP_KEY!;
-const cluster_id = process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER!;
-
-const pusherClient = new Pusher(pusher_key, {
-  cluster: cluster_id,
+const pusherClient = new Pusher(process.env.NEXT_PUBLIC_SOKETI_APP_KEY!, {
+  wsHost: process.env.NEXT_PUBLIC_SOKETI_HOST!,
+  forceTLS: true,
+  disableStats: true,
+  enabledTransports: ["ws", "wss"],
 });
 Pusher.logToConsole = false;
 
