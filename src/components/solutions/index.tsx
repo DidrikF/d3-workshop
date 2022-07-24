@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import TRexGame from "../t-rex-game";
-import Top10Chart from "./1-top-10-chart";
+import Top10Chart from "./1-top-10-chart/index";
 import HistoryChart from "./2-history-chart";
 import DistributionChart from "./3-distribution-chart";
 
@@ -17,9 +17,7 @@ const Tab: React.FC<{ children: React.ReactNode; value: TabName }> = ({
   value,
 }) => {
   const router = useRouter();
-  const tabHref = `/problems/${value}`;
-
-  console.log(router.asPath);
+  const tabHref = `/solutions/${value}`;
 
   return (
     <Link href={tabHref}>
@@ -34,7 +32,7 @@ const Tab: React.FC<{ children: React.ReactNode; value: TabName }> = ({
   );
 };
 
-const ProblemsPageContent: NextPage = () => {
+const SolutionsPageContent: NextPage = () => {
   const { query } = useRouter();
   const tab = query.tab?.[0];
 
@@ -64,4 +62,4 @@ const ProblemsPageContent: NextPage = () => {
   );
 };
 
-export default ProblemsPageContent;
+export default SolutionsPageContent;

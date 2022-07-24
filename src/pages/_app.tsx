@@ -6,7 +6,7 @@ import BaseLayout from "../components/layout/BaseLayout";
 import { SessionProvider } from "next-auth/react";
 
 import "../styles/globals.css";
-import "../components/problems/t-rex-game/styles.css";
+import "../components/t-rex-game/styles.css";
 
 const MyApp: AppType = ({
   Component,

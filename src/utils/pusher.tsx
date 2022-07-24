@@ -5,13 +5,17 @@ import { useEffect } from "react";
 import { useEvent } from "../hooks/useEvent";
 import { pick } from "lodash";
 
+export const T_REX_GAME_CHANNEL_ID = "t-rex-game";
+export enum TRexGameEvent {
+  ScoreAdded = "score-added",
+}
+
 const pusherClient = new Pusher(process.env.NEXT_PUBLIC_SOKETI_APP_KEY!, {
   wsHost: process.env.NEXT_PUBLIC_SOKETI_HOST!,
   forceTLS: true,
   disableStats: true,
   enabledTransports: ["ws", "wss"],
 });
-Pusher.logToConsole = false;
 
 export const usePusherStore = create<{
   pusherClient: Pusher;
@@ -81,7 +85,7 @@ export function usePusherEvent<MessageType>(
   useEffect(() => {
     if (channel) {
       channel.bind(eventName, stableCallback);
-      console.log("Successfully bound to event: ", eventName);
+      console.log("Bound to event: ", eventName);
 
       return () => {
         channel.unbind(eventName, stableCallback);

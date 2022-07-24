@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #__next {
-  min-height: 100vh;
+
+
+@layer base {
+  html, body, #__next {
+    min-height: 100vh;
+    color-scheme: dark;
+    @apply bg-slate-900 text-slate-200 font-mono;
+
+  }
+
+  * {
+    @apply text-slate-300;
+  }
+  
+  h1 {
+    @apply text-3xl;
+  }
+  h2 {
+    @apply text-2xl;
+  }
+  h3 {
+    @apply text-xl;
+  }
+  h4 {
+    @apply text-lg;
+  }
+  h5 {
+    @apply text-lg;
+  }
+  h6 {
+    @apply text-lg;
+  }
 }

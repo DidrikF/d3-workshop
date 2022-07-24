@@ -33,7 +33,7 @@ export const gameRouter = createRouter()
       });
     },
   })
-  .query("scoreHistory", {
+  .query("usersWithLast10Scores", {
     async resolve({ ctx }) {
       return await ctx.prisma.user.findMany({
         include: {
@@ -43,7 +43,7 @@ export const gameRouter = createRouter()
       });
     },
   })
-  .query("allScores", {
+  .query("usersWithScores", {
     async resolve({ ctx }) {
       return await ctx.prisma.user.findMany({
         include: {
@@ -53,31 +53,14 @@ export const gameRouter = createRouter()
       });
     },
   })
-  .query("yourScores", {
-    async resolve({ ctx }) {
-      if (!ctx.user?.id) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
-      return await ctx.prisma.score.findMany({
-        where: {
-          userId: ctx.user.id,
-        },
-      });
-    },
-  })
   .mutation("addScore", {
     input: z.object({
       score: z.number(),
     }),
     async resolve({ ctx, input }) {
-      if (!ctx.user?.id) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
       const result = await ctx.prisma.score.create({
         data: {
-          userId: ctx.user.id,
+          userId: ctx.user!.id,
           value: input.score,
         },
         include: { user: true },

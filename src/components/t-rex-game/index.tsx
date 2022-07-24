@@ -1,25 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect } from "react";
-import { trpc } from "../../../utils/trpc";
+import { useEvent } from "../../hooks/useEvent";
+import { trpc } from "../../utils/trpc";
 import { Runner } from "./core";
 
 const TRexGame = () => {
   const { mutate: addScoreMutation } = trpc.useMutation(["game.addScore"]);
 
-  const gameOverHandler = (score: number) => {
+  const gameOverHandler = useEvent((score: number) => {
     addScoreMutation({ score: score });
-  };
+  });
 
   useEffect(() => {
-    // @ts-ignore
-    window.runner = new Runner(".interstitial-wrapper", {
+    const runner = new Runner(".interstitial-wrapper", {
       onGameOver: gameOverHandler,
     });
+
+    return () => {
+      runner.stopListening();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      <div className="offline">
+      <div className="offline h-[150px]">
         <div id="main-frame-error" className="interstitial-wrapper">
           <div id="main-content" className="hidden">
             <div className="icon icon-offline"></div>
