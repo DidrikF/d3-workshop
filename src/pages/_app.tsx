@@ -4,8 +4,10 @@ import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
 import BaseLayout from "../components/layout/BaseLayout";
 import { SessionProvider } from "next-auth/react";
+import Head from "next/head";
 
 import "../styles/globals.css";
+import "../components/visx-chart/styles.css";
 import "../components/t-rex-game/styles.css";
 
 const MyApp: AppType = ({
@@ -14,6 +16,9 @@ const MyApp: AppType = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Head>
+        <title>D3 Workshop</title>
+      </Head>
       <BaseLayout>
         <Component {...pageProps} />
       </BaseLayout>

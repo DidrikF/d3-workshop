@@ -1,9 +1,12 @@
 import type { NextPage } from "next";
+import VisxLineChart from "../../components/visx-chart";
 
 const Intro: NextPage = () => {
   return (
     <>
-      <div>Intro</div>
+      <h1>Visx Example</h1>
+
+      <VisxLineChart />
     </>
   );
 };

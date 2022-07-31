@@ -45,6 +45,7 @@ export default function BaseLayout({
             <NavSectionHeading>Material</NavSectionHeading>
             <NavSection>
               <Link href="/material/1-intro">Introduction</Link>
+              <Link href="/material/10-visx">Visx example</Link>
             </NavSection>
 
             {session?.user && (

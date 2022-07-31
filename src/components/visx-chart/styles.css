@@ -1,0 +1,13 @@
+@tailwind components;
+
+@layer components {
+  
+  .visx-chart line {
+    @apply stroke-white;
+  }
+  
+  .visx-chart text {
+    @apply fill-white;
+  }
+
+}
