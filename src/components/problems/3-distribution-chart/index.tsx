@@ -59,6 +59,8 @@ const ScatterChart = ({
   svgWidth: number;
   svgHeight: number;
 }) => {
+  console.log("The data you are working with: ", data);
+
   const id = useId("multi-line-chart");
 
   const width = svgWidth - MARGIN.left - MARGIN.right;
@@ -93,8 +95,6 @@ const ScatterChart = ({
         }}
       >
         <ScatterPlots scales={scales} data={data} />
-
-        <StatsPlots scales={scales} data={data} />
 
         <XAxis
           xScale={scales.x}
@@ -226,128 +226,18 @@ const ScatterPlots = ({
 }) => {
   const id = useId("scatter-container");
 
+  /**
+   * Problem 1
+   */
   useEffect(() => {
     const dataContainer = d3.select(`#${id}`);
 
-    dataContainer
-      .selectAll("circle")
-      .data(
-        data.flatMap((userData) => userData.Score),
-        (d) => (d as ScoreWithUser).id
-      )
-      .join(
-        (enter) =>
-          enter
-            .append("circle")
-            .attr("r", 6)
-            .attr("cx", (d) => scales.x(d.user.name!)!)
-            .attr("cy", (d) => scales.y(d.value))
-            .attr("fill", (d) =>
-              interpolateSinebow(
-                data.findIndex((userData) => userData.id === d.userId) /
-                  data.length
-              )
-            )
-            .attr("opacity", 0)
-            .call((_enter) =>
-              _enter
-                .transition()
-                .duration(ANIMATION_DURATION)
-                .attr("opacity", 0.5)
-            ),
-        (update) =>
-          update
-            .transition()
-            .duration(ANIMATION_DURATION)
-            .attr("opacity", 0.5)
-            .attr("cx", (d) => scales.x(d.user.name!)!)
-            .attr("cy", (d) => scales.y(d.value)),
-        (exit) => exit.transition().attr("opacity", 0).remove()
-      );
+    dataContainer.selectAll("circle").data(
+      data.flatMap((userData) => userData.Score),
+      (d) => (d as ScoreWithUser).id
+    );
+    // Your code goes here. Continue with .join(...)
   }, [data, id, scales]);
-
-  return (
-    <g
-      id={id}
-      style={{ transform: `translate(${MARGIN.left}px, ${MARGIN.top}px)` }}
-    ></g>
-  );
-};
-
-const StatsPlots = ({ scales, data }: { scales: Scales; data: UserData[] }) => {
-  const id = useId("stats-container");
-
-  useEffect(() => {
-    const MEAN_LINE_LENGTH = 34;
-    const dataContainer = d3.select(`#${id}`);
-
-    const stats = data.map((userData) => ({
-      ...userData,
-      mean: d3.mean(userData.Score.map((d) => d.value)) ?? 0,
-      median: d3.median(userData.Score.map((d) => d.value)) ?? 0,
-      firstQuantile:
-        d3.quantile(
-          userData.Score.map((d) => d.value),
-          0.25
-        ) ?? 0,
-      thirdQuantile:
-        d3.quantile(
-          userData.Score.map((d) => d.value),
-          0.75
-        ) ?? 0,
-    }));
-
-    dataContainer
-      .selectAll("line")
-      .data(stats, (d) => (d as typeof stats[0]).id)
-      .join(
-        (enter) =>
-          enter
-            .append("line")
-            .attr("stroke", (d) =>
-              interpolateSinebow(
-                stats.findIndex((userData) => userData.id === d.id) /
-                  data.length
-              )
-            )
-            .attr("stroke-width", 1)
-            .attr("opacity", 0)
-            .call(setPosition as any)
-            .call((_enter) =>
-              _enter
-                .transition()
-                .duration(ANIMATION_DURATION)
-                .attr("opacity", 1)
-            ),
-        (update) =>
-          update
-            .transition()
-            .duration(ANIMATION_DURATION)
-            .attr("opacity", 1)
-            .call(setPosition as any),
-        (exit) =>
-          exit
-            .transition()
-            .duration(ANIMATION_DURATION)
-            .attr("opacity", 0)
-            .remove()
-      );
-
-    function setPosition(
-      selection: d3.Selection<
-        d3.BaseType,
-        typeof stats[0],
-        d3.BaseType,
-        unknown
-      >
-    ) {
-      selection
-        .attr("x1", (d) => scales.x(d.name!)! - MEAN_LINE_LENGTH / 2)
-        .attr("x2", (d) => scales.x(d.name!)! + MEAN_LINE_LENGTH / 2)
-        .attr("y1", (d) => scales.y(d.mean))
-        .attr("y2", (d) => scales.y(d.mean));
-    }
-  }, [scales, data, id]);
 
   return (
     <g

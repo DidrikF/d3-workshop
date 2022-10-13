@@ -169,8 +169,6 @@ const Bars = ({ scales, data }: { scales: Scales; data: ScoreWithUser[] }) => {
   const id = useId("data-container");
 
   useEffect(() => {
-    console.log(data);
-
     const dataContainer = d3.select(`#${id}`);
 
     /**
@@ -183,13 +181,12 @@ const Bars = ({ scales, data }: { scales: Scales; data: ScoreWithUser[] }) => {
         (enter) =>
           enter
             .append("rect")
-            .attr("rx", 2)
-            .attr("fill", (_, i) => interpolateRdYlGn(i / 9)!)
             .attr("y", (d) => scales.y(String(d.id))!)
             .attr("height", scales.y.bandwidth())
             .attr("x", 0)
             .attr("width", 0)
-            .attr("data-value", (d) => d.value)
+            .attr("rx", 2)
+            .attr("fill", (_, i) => interpolateRdYlGn(i / 9)!)
             .call((_enter) =>
               _enter
                 .transition("grow bar height with chained transitions")
@@ -198,13 +195,12 @@ const Bars = ({ scales, data }: { scales: Scales; data: ScoreWithUser[] }) => {
             ),
         (update) =>
           update
-            .attr("data-value", (d) => d.value)
             .transition("update bars to match new data")
             .duration(ANIMATION_DURATION)
-            .attr("fill", (d, i) => interpolateRdYlGn(i / 10)!)
             .attr("y", (d) => scales.y(String(d.id))!)
             .attr("height", scales.y.bandwidth())
-            .attr("width", (d) => scales.x(d.value)!),
+            .attr("width", (d) => scales.x(d.value)!)
+            .attr("fill", (d, i) => interpolateRdYlGn(i / 10)!),
         (exit) => exit.transition().attr("opacity", 0).remove()
       );
 

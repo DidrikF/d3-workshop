@@ -1,0 +1,30 @@
+# Line chart of last 10 scores of each player
+
+All the scaffolding is in place. Scales are defined and axes are in place. All you have to do is to render a line chart for the top 10 scores of each player.
+
+## Problem 1 
+
+Draw a line chart of the 10 last scores of each player
+
+1. Create a line generator using `d3.line()`
+  - Define x and y accessors for the line generator using teh provided scales
+  - Use d3.curveMonotoneX to smoothen out the line
+
+2. Use the line generator to draw a line for the scores of each player
+  - Use data bidning and data joins to achive this
+
+Resources:
+[https://github.com/d3/d3-shape#lines](https://github.com/d3/d3-shape#lines)
+[https://github.com/d3/d3-shape#line_x](https://github.com/d3/d3-shape#line_x)
+[https://github.com/d3/d3-shape#line_y](https://github.com/d3/d3-shape#line_y)
+
+## Problem 2 
+
+Add animated transitions to the line chart
+
+1. Investigate `selection.attrTween()` and the package `d3-interpolate-path` to animate the lines from one state to another
+
+2. Investigate how to use `stroke-dasharray` and `stroke-dashoffset` to animate the lines into view
+  - [https://css-tricks.com/svg-line-animation-works/](https://css-tricks.com/svg-line-animation-works/)
+  - [https://css-tricks.com/svg-line-animation-works/](https://css-tricks.com/svg-line-animation-works/)
+

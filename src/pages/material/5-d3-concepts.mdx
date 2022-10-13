@@ -1,0 +1,315 @@
+import { MDXLayout } from '../../components/layout/MdxLayout'
+import Image from 'next/image';
+import svgSizesBreakdown from '../../assets/svg-sizes-breakdown.png';
+
+<div className="slide">
+
+## Selections
+
+- D3 forenkler å gjøre operasjoner på DOM noder ved hjelp av `selections`
+- `selections` er en samling av DOM noder med et deklarativt API for å endre på dem
+
+```html
+<svg id="example-svg">
+  <circle ... />
+  <circle ... />
+  <circle ... />
+</svg>
+```
+
+```js
+d3.select('#example-svg')
+  .style('background-color', 'white')
+
+d3.selectAll("#example-svg circle")
+  .attr("r", 10)
+  .attr("fill", "red")
+```
+
+[d3-selection API docs](https://github.com/d3/d3-selection)
+
+</div>
+
+
+<div className="slide">
+
+## Dynamic properties
+
+Selections leder oss videre til 👉 "dynamic properties"
+
+- `.attr()` og `.style()` kalles en gang for hver node i selectionen
+- Man kan gi en funksjon som argument til `.attr()` og `.style()` 🤯
+- Dette blir svært nytting når vi senere binder data til DOM noder
+
+```js
+d3.selectAll('circle')
+  .attr('r', (d, i) => i * 10) // vi kommer tilbake til `d` om litt
+
+d3.select('path')
+  .attr("d", () => createPath())
+```
+
+[Bli kjent med andre måter man kan manipulere elementer med D3](https://github.com/d3/d3-selection#modifying-elements)
+
+</div>
+
+<div className="slide">
+
+## Append må vi også vite om
+
+```js
+const selection = d3.selectAll('.box') // selection of elements with the class "box"
+const paragraphs = selection.append('p') // selection of paragraphs appended to each "box"
+paragraphs.text('Hello world')
+```
+
+</div>
+
+<div className="slide">
+
+## Data binding → `enter`, `update` og `exit` seleksjonene
+
+🤔 Nå som vi vet hvordan vi kan manipulere DOM noder med D3, hvordan kan vi gjøre dette data-drevet? 
+
+- Vi kan binde data til en seleksjon med DOM noder ved å bruke: `.data()`
+- Gitt et array med data du ønsker å presentere: 
+```js
+const data = [
+  { key: 'Tom', score: 10}, 
+  { key: 'Alex', score: 6 }, 
+  { key: 'John', score: 8 }
+]
+```
+- Vi har følgende dokument:
+```html
+<svg width="500" height="200">
+  <g className="data-container"></g>
+</svg>
+```
+- For å binde hvert element i dette arrayet til et `rect` element skriver vi:
+```js
+const updateSelection = d3.selectAll('.data-container rect').data(data, (d) => d.key);
+```
+- Dette returnerer noe vi kalle `update` seleksjonen
+- Ingen elementer er på skjermen enda 🤔
+```js
+const enterSelection = updateSelection.enter();
+enterSelection.append('rect')
+```
+- 🎉 Nå har vi lagt til et `rect` element for hvert element i `data` arrayet
+- Vi kan nå manipulere `rect` elementene med `.attr()` og `.style()`
+```js
+updateSelection
+  .enter()
+  .append('rect')
+  .attr('x', (d) => getXCoord(d.key))
+  .attr('y', (d) => getYCoord(d.score))
+  .attr('width', (d) => getWidth(d.key))
+  .attr('height', (d) => getHeight(d.score))
+````
+- La oss si at dataene endrer seg til det følgende:
+```js
+const data = [
+  { key: 'Karen', score: 9 }, 
+  { key: 'Alex', score: 15 }, 
+  { key: 'John', score: 8 }
+]
+```
+- Vi oppdaterer data bindingen
+```js
+const updateSelection = d3.selectAll('.data-container rect').data(data, (d) => d.key); // [{ key: 'Alex', score: 15} }]
+const enterSelection = updateSelection.enter(); // [{ key: 'Karen', score: 9 }]
+const exitSelection = updateSelection.exit(); // [{ key: 'Tom', score: 10}]
+```
+- Nå kan vi håndere disse tre seleksjonene på forskjellige måter 🤯
+```js
+updateSelection
+  .attr('x', (d) => getXCoord(d.key))
+  .attr('y', (d) => getYCoord(d.score))
+  .attr('width', (d) => getWidth(d.key))
+  .attr('height', (d) => getHeight(d.score))
+
+enterSelection
+  .append('rect')
+  .attr('x', (d) => getXCoord(d.key))
+  .attr('y', (d) => getYCoord(d.score))
+  .attr('width', (d) => getWidth(d.key))
+  .attr('height', (d) => getHeight(d.score))
+
+exitSelection.remove()
+```
+
+</div>
+
+
+<div className="slide">
+
+## Data joins
+
+- 💡 D3 har en annen, mer effektiv, måte å uttrykke manupulasjon av enter, update of exit seleksjonene i respons til binding av ny data.
+- 😎 Dette kalles en data join
+```js
+d3.selectAll('.data-container rect')
+  .data(data, (d) => d.key)
+  .join(
+    (enter) => enter.append('rect')
+      .attr('x', (d) => getXCoord(d.key))
+      .attr('y', (d) => getYCoord(d.score))
+      .attr('width', (d) => getWidth(d.key))
+      .attr('height', (d) => getHeight(d.score))
+      .attr('fill', 'blue'),
+    ,
+    (update) => update
+      .attr('x', (d) => getXCoord(d.key))
+      .attr('y', (d) => getYCoord(d.score))
+      .attr('width', (d) => getWidth(d.key))
+      .attr('height', (d) => getHeight(d.score))
+    ,
+    (exit) => exit.remove()
+  )
+```
+
+</div>
+
+<div className="slide">
+
+## 📏 Scales 
+
+🤓: Ja, ja, enkel DOM manipulasjon.
+
+🤷‍♂️: Du glosset over alle de små beregningne som må gjøres for å plassere og skalerere alle elementene! 
+
+👨‍🏫: d3-scale biblioteket er her for å hjelpe oss
+
+
+Kanskje det viktigste konseptet i hele D3 er skalaer. Skalaer er funksjoner som "mapper" abstrakte verdier fra data domenet til 
+visuelle variabler/verdier som vi kan buke til å definere posisjon, størrelse, farge, osv. på elementene våre.
+
+- Det finnes mange skalaer. Vi kommer kun til å være borti: 
+  - `d3.scaleLinear()`
+  - `d3.scaleBand()`
+  - `d3.scalePoint()`
+
+- Først la oss definere noen størrelse:
+
+<Image src={svgSizesBreakdown} alt="svg sizes breakdown" />
+
+Under er en lineær skala for å oversette mellom `score` fra data-domenet og `height` i det "visuelle" domenet:
+
+```js
+const linearScale = d3
+  .scaleLinear()
+  .domain([0, d3.max(data, (d) => d.score)])
+  .range([0, height]);
+
+const barHeight = linearScale(d.score);
+```
+
+`d3.scaleBand()` er en skala som er spesifikt designet for å plassere og skalerere `rect` elementer i søylediagrammer:
+
+[La oss bli kjent med band scales](https://observablehq.com/@d3/d3-scaleband)
+
+Under er en "band scale" for å oversette mellom `key` (kategorier) fra data-domenet og `x` og `width` for søyler i søylediagrammet i det "visuelle" domenet:
+
+```js
+const bandScale = d3
+  .scaleBand()
+  .domain(data.map((d) => d.key))
+  .range([0, width])
+  .padding(0.35),
+```
+
+Disse skalaene kan så gjelpe oss å definere posisjon og størrelse på elementene våre:
+
+```js
+d3.selectAll('.data-container rect')
+  .data(data, (d) => d.key)
+  .join(
+    (enter) => enter.append('rect')
+      .attr('x', (d) => bandScale(d.key))
+      .attr('width', (d) => bandScale.bandWidth())
+      .attr('y', (d) => height - linerScale(d.score))
+      .attr('height', (d) => linerScale(d.score))
+      .attr('fill', 'blue'),
+    ,
+    (update) => update
+      .attr('x', (d) => bandScale(d.key))
+      .attr('width', (d) => bandScale.bandWidth())
+      .attr('y', (d) => height - linerScale(d.score))
+      .attr('height', (d) => linerScale(d.score))
+    ,
+    (exit) => exit.remove()
+  )
+```
+
+💡 Nå har vi noe repetisjon, la oss fikse det:
+
+- Vi kan bruke `selection.call()` for å kalle en funksjon på alle elementene i en seleksjon
+- `.call()` mottar seleksjonen den kalles på som argument og returnerer den samme seleksjonen (uavhengig av hva du returnerer fra callback'et)
+
+```js
+function setRectAttrs(selection) {
+  selection
+    .attr('x', (d) => bandScale(d.key))
+    .attr('width', (d) => bandScale.bandWidth())
+    .attr('y', (d) => height - linerScale(d.score))
+    .attr('height', (d) => linerScale(d.score))
+}
+
+d3.selectAll('.data-container rect')
+  .data(data, (d) => d.key)
+  .join(
+    (enter) => enter.append('rect')
+      .call(setRectAttrs)
+      .attr('fill', 'blue'),
+    ,
+    (update) => update
+      .call(setRectAttrs)
+      .attr('height', (d) => linerScale(d.score))
+    ,
+    (exit) => exit.remove()
+  )
+```
+
+### Lenker for å lære mer om skalaer:
+- [Intro til D3 scales](https://medium.com/@mbostock/introducing-d3-scale-61980c51545f)
+- [d3-scale docs](https://github.com/d3/d3-scale)
+
+</div>
+
+
+<div className="slide">
+
+## Animasjon
+
+Vi nærmer oss slutten av presentasjonen 🎉
+
+Noe som gjøre D3 svært godt likt er at det gjør det enkelt å legge til animasjoner.
+
+La oss bare ta for oss et eksempel
+
+```js
+d3.selectAll('.data-container rect')
+  .data(data, (d) => d.key)
+  .join(
+    (enter) => enter.append('rect')
+      .call(setRectAttrs)
+      .attr('fill', 'blue')
+      .attr('opacity', 0)
+      .call((_enter) => _enter
+          .transition()
+          .attr('opacity', 1)
+        ),
+    (update) => update
+      .transition()
+      .delay((d, i) => i * 100) // optional
+      .duration(1000) // optional
+      .ease(d3.easeCubic) // optional
+      .call(setRectAttrs)
+      .attr('opacity', 1)
+    ,
+    (exit) => exit.transition().attr("opacity", 0).remove()
+  )
+```
+
+</div>

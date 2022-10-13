@@ -1,0 +1,65 @@
+# Bar Chart of the top 10 scores
+
+## Problem 1: Define scales
+
+1. Define a linear scale to map scores to positions along the x-axis
+  - Take into account the width of the chart and the provided margins
+  - The domain should be from 0 to the maximum score in the data
+  - Use the `d3.max` function to find the maximum value in the dataset
+
+2. Define a band scale which can map players behind the top 10 scores to positions allong the y-axis
+  - Take into account the height of the SVG and the provided margins
+  - Derive the domain from the data
+  - Pick a suitable value for the inner and outer padding of the band scale.
+
+Resources:
+[https://github.com/d3/d3-scale#scaleLinear](https://github.com/d3/d3-scale#scaleLinear)
+[https://github.com/d3/d3-scale#scaleBand](https://github.com/d3/d3-scale#scaleBand)
+[d3.max](https://github.com/d3/d3-array/blob/v3.2.0/README.md#max)
+
+## Problem 2: Render the X-axis
+
+1. Create an x-axis at the bottom of the chart, using the linear scale for scores you defined in the previous step.
+
+Resources:
+[d3.axisBottom](https://github.com/d3/d3-axis/blob/v3.0.0/README.md#axisBottom)
+
+## Problem 3: Render the Y-axis
+
+1. Create a y-axis on the left side of the chart, using the band scale for players you defined in the previous step.
+  - The name of the player should be used as labels for the ticks along the axis
+
+Resources:
+[d3.axisLeft](https://github.com/d3/d3-axis/blob/v3.0.0/README.md#axisLeft)
+
+## Problem 4: Get the data on the screen
+
+1. Render a rect for each of the top 10 scores using the scales you defined earlier.
+  - Apply what we learned about data binding and data joins
+  - The width of the rect is calculated by: `scales.x(score)`
+  - The x-position of the rect is 0, because of how we defined the scales and transformed the `data-container`-group
+  - The height of the rect is calculated by: `scales.y.bandwidth()`
+  - The y-position of the rect is calculated by: `scales.y(player.id)`
+  - Add color to the rects as you please
+
+  
+Extra credit:
+  - The fill each rect with a color based on the score. For example: from green (best) to red (worst).
+
+Resources: 
+[https://www.d3indepth.com/datajoins/](https://www.d3indepth.com/datajoins/)
+
+## Problem 5: Adding trasitions
+
+1. Try to reproduce the transitions/animations in the solution (without looking at the code 🙈).
+
+Resources: 
+[https://www.d3indepth.com/transitions/](https://www.d3indepth.com/transitions/)
+
+
+## Problem 6 (extra credit): Add Scores at the end of the bars
+
+1. Render the score of each player at the end of the bar, like in the solution
+  - Use `text` elements to add the scores
+  - Use the scales to calculate positions
+  - Use data binding and data joins like allways 😉 

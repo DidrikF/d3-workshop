@@ -20,7 +20,7 @@ const Home: NextPage = () => {
 
       {!session?.user ? (
         <>
-          <p className="my-4 ">Sign in to access the material and problems.</p>
+          <p className="my-4 ">Sign in to access exercises.</p>
           <button
             className="bg-sky-500 highlight-white/20 hover:bg-sky-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg flex items-center justify-center"
             onClick={() => signIn()}

@@ -1,0 +1,276 @@
+import { MDXLayout } from '../../components/layout/MdxLayout'
+import top10Scoes from '../../assets/top-10-scores.png';
+import Image from 'next/image';
+
+<div className="slide">
+
+## Hva er SVG
+
+- SVG er et XML-basert format for å beskrive to-dimensjonal vektorgrafikk 
+- Grafikk beskrevet med tekst
+- I vektorgrafikk defineres figurene som utgjør grafikken ved hjelp av matematiske uttrykk
+- Står i kontrast til punktgrafikk (raster graphics) som er definerer farger for hver piksel i et bilde
+- SVG er for grafikk det HTML er for tekst
+- SVG er en stor spesifikasjon
+
+```html
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="red" />
+  <circle cx="150" cy="100" r="80" fill="green" />
+  <text x="150" y="125" font-size="60" text-anchor="middle" fill="white">
+    SVG
+  </text>
+</svg>
+````
+
+</div>
+
+<div className="slide">
+
+## La oss lage et skille mellom HTML og SVG
+
+- SVG opererer med andre regler enn HTML
+- Layout og rendering fåregår noe annerledes
+
+### Forskjeler fra HTML
+  - Ingen "document flow"
+  - Ingen "box model"
+  - Ingen "positioning"
+  - Ingen "z-index"
+
+### Mental modell for SVGer
+  - Alt posisjoneres med (x,y) koordinater
+  - Koordinat system med (0,0) i øverste venstre hjørne
+  - Rekkefølgen på elementene i SVGen bestemmer hva som blir "over" hva (senere elementer kommer over)
+  - Størrelsen på elementer bestemmes av: 
+    viewBox, width og height på SVGen i tillegg til attributtene til elementene
+
+<img src="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Positions/canvas_default_grid.png" alt="SVG layout" />
+
+</div>
+
+<div className="slide">
+
+## Hvorfor rendres SVGen slik? 👉 viewBox og preserveAspectRatio
+
+> "The viewBox attribute defines the position and dimension, in user space, of an SVG viewport."
+
+- Viewboxen består av 4 tall: min-x, min-y, width og height
+- ViewBox definerer orientering og zoom på teleskopet inn i SVG verdenen 🤯
+
+> 💡 [Sjekk ut denne demoen](https://wattenberger.com/guide/scaling-svg)
+
+```html
+<svg 
+  viewBox="0 0 300 300" 
+  preserveAspectRatio="xMidYMid"
+  width="150" 
+  height="150" 
+  className="border-white border-solid border-2"
+>
+  <rect x="10" y="10" width="280" height="280">
+</svg>
+````
+
+<svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid" width="150" height="150" className="border-white border-solid border-2 my-10">
+  <rect x="10" y="10" width="280" height="280" fill="lightblue"  />
+</svg>
+
+💡 Sett en viewbox og definer innholdet i SVGen i forhold til denne. Deretter kan du skalere hele grafikken med width og height uten å miste kvalitet.
+
+> 🤓 Oppgave: 
+>
+> Se hva som skjer når du setter preserveAspectRatio="none" og sett width/height på en måte som ikke opprettholder aspektforholdet ([mer info](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox))
+
+</div>
+
+<div className="slide">
+  
+## SVG elementer
+
+### Rect
+
+- Du kan lage rektangler med "rect" elementet.
+- F.eks: Søylene i et søylediagram
+
+```html
+<rect 
+  x="10" 
+  y="10" 
+  width="30" 
+  height="30" 
+  stroke="black" 
+  fill="transparent" 
+  stroke-width="5"
+/>
+  
+<rect 
+  x="60" 
+  y="10" 
+  rx="10" 
+  ry="10" 
+  width="30" 
+  height="30" 
+  stroke="black" 
+  fill="transparent" 
+  stroke-width="5"
+/>
+```
+### Circle
+
+- Du kan lage sirkler med "circle" elementet. 
+- Man posisjonerer sirkelen med cx og cy attributtene, som definerer x og y koordinater for senteret av sirkelen.
+- F.eks: Punkter i et punktdiagram (scatter plot)
+
+```html
+<circle 
+  cx="25" 
+  cy="75" 
+  r="20" 
+  stroke="red" 
+  fill="transparent" 
+  stroke-width="5"
+/>
+```
+
+### Ellipse
+
+```html
+<ellipse 
+  cx="75" 
+  cy="75" 
+  rx="20" 
+  ry="5" 
+  stroke="red" 
+  fill="transparent" 
+  stroke-width="5"
+/>
+```
+### Line
+
+- For å tegne rette linjer fra et punkt til et annet
+- F.eks: akser, merker på aksene, gridlinjer
+
+```html
+<line 
+  x1="10" 
+  x2="50" 
+  y1="110" 
+  y2="150" 
+  stroke="orange" 
+  stroke-width="5"
+/>
+```
+### Polyline
+
+- For å tegne linjer mellom flere punkter
+
+```html
+<polyline 
+  points="60 110 65 120 70 115 75 130 80 125 85 140 90 135 95 150 100 145"  
+  stroke="orange" 
+  fill="transparent" 
+  stroke-width="5"
+/>
+```
+### Polygon
+
+- Samme som polyline, men linjen tilbake til startpunktet blir automatisk lagt til
+
+```html
+<polygon 
+  points="50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180"
+  stroke="green" 
+  fill="transparent" 
+  stroke-width="5"
+/>
+```
+
+### Path
+
+- Kan også tagne kurvede linjer
+- Kan definere alle de andre grunnleggende formene 
+- Det mest generelle elementet, og kan brukes til å definere vilkårlige former
+- F.eks: kurver i et kurvediagram
+
+```html
+<path 
+  d="M20,230 Q40,205 50,230 T90,230" 
+  fill="none" 
+  stroke="blue" 
+  stroke-width="5"
+/>
+```
+
+### Text
+
+- For å tegne tekst
+
+```html
+<text 
+  x="150" 
+  y="200" 
+  textAnchor="middle"
+>
+  Hello world
+</text>
+```
+
+<svg viewBox="0 0 200 250" width="400" height="500" xmlns="http://www.w3.org/2000/svg" className="bg-white my-10">
+  <rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" strokeWidth="5"/>
+  <rect x="60" y="10" rx="10" ry="10" width="30" height="30" stroke="black" fill="transparent" strokeWidth="5"/>
+
+  <circle cx="25" cy="75" r="20" stroke="red" fill="transparent" strokeWidth="5"/>
+  <ellipse cx="75" cy="75" rx="20" ry="5" stroke="red" fill="transparent" strokeWidth="5"/>
+
+  <line x1="10" x2="50" y1="110" y2="150" stroke="orange" strokeWidth="5"/>
+  <polyline points="60 110 65 120 70 115 75 130 80 125 85 140 90 135 95 150 100 145"
+      stroke="orange" fill="transparent" strokeWidth="5"/>
+
+  <polygon points="50 160 55 180 70 180 60 190 65 205 50 195 35 205 40 190 30 180 45 180"
+      stroke="green" fill="transparent" strokeWidth="5"/>
+
+  <path d="M20,230 Q40,205 50,230 T90,230" fill="none" stroke="blue" strokeWidth="5"/>
+
+  <text x="150" y="50" transform="rotate(90, 150, 50)">Hello world</text>
+</svg>
+
+</div>
+
+
+<div className="slide">
+
+## Group elementet
+
+- Grupperer flere elementer i en SVG
+- Blir selv ikke tegnet
+- Barn av gruppen arver attributter fra gruppene de befinner seg i
+- Transformasjoner på gruppen blir også gjort på barna (brukes mye)
+- F.eks: tegn x-aksen med "ticks" og "labels" som barn av en gruppe, deretter transformer hele gruppen til riktig plassering
+
+
+```html
+<svg width="300" height="200">
+  <g transform="translate(100, 0)" fill="red">
+    <rect x="50" y="50" width="50" height="50" />
+    <circle cx="50" cy="100" r="25"  />
+  </g>
+</svg>
+```
+
+<svg width="300" height="200" className="bg-white">
+  <g transform="translate(100, 0)" fill="red">
+    <rect x="50" y="50" width="50" height="50" />
+    <circle cx="75" cy="125" r="25"  />
+  </g>
+</svg>
+
+</div>
+
+<div className="slides">
+
+## Så en datavisualisering med D3 består av...
+
+<Image src={top10Scoes} alt="example data visualization" />
+
+</div>

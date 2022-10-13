@@ -6,6 +6,8 @@ import BaseLayout from "../components/layout/BaseLayout";
 import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
 
+import "github-markdown-css";
+import "dracula-prism/dist/css/dracula-prism.css";
 import "../styles/globals.css";
 import "../components/visx-chart/styles.css";
 import "../components/t-rex-game/styles.css";

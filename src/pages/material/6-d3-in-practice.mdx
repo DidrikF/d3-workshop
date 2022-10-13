@@ -1,0 +1,97 @@
+import { MDXLayout } from '../../components/layout/MdxLayout'
+import Image from 'next/image';
+import architectureOverview from '../../assets/architecture-diagram.png'
+
+<div className="slide">
+
+## D3 i prasis - introduksjon
+
+Nå kan vi:
+- Bygge SVGer
+- Manipulere dokumenter med D3
+- Grunnleggende konsepter i D3
+
+Neste steg:
+- Resten av workshoppen vil vi gå gjennom eksempler på bruk av D3 med tilhørende oppgaver. 🙌
+- Under [Solutions](../solutions/top-10) ser dere hva dere skal sikte mot
+- Under [Problem sets](../problems/top-10) finner dere oppgavene dere skal løse
+
+</div>
+
+<div className="slide">
+
+## Akser
+
+På dette tidspunkt begynte det å bli sent på kvelden 😅
+
+La oss lære om akser [her](https://www.d3indepth.com/axes/)
+
+</div>
+
+
+<div className="slide">
+
+## Integrere D3 i React
+
+```jsx
+const MARGIN = {
+  top: 20,
+  right: 20,
+  bottom: 20,
+  left: 20,
+};
+
+const ChartContainer = ({ }) => {
+  const [size, ref] = useResizeObserver();
+  
+  const data = useData();
+
+  return (
+    <div style={{ width: '100%', height: 500, position: 'relative'}} ref={ref}>
+      <Chart data={data} width={size.width} height={size.height} />
+    </div>
+  );
+}
+
+const Chart = ({data, svgWidth, svgHeight}) => {
+  const width = svgWidth - MARGIN.left - MARGIN.right;
+  const height = svgHeight - MARGIN.top - MARGIN.bottom;
+
+  const scales = useMemo(() => {
+    x: d3.scaleBand()...
+    y: d3.scaleLinear()...
+  }, [data, width, height]);
+
+  useEffect(() => {
+    renderXAxis('.x-axis', scales.x);
+    renderYAxis('.y-axis', scales.y);
+    renderData('.data-container', data, scales);
+  }, [data, scales]);
+
+  return (
+    <svg id="viz" width={width} height={height} style={{ position: 'absolute' }}>
+      <g className="data-container" transform={`translate(${MARGIN.left}, ${Margin.right})`}>
+      <g className="x-axis" transform={`translate(${MARGIN.left}, ${MARGIN.top + height})`}></g>
+      <g className="y-axis" transform={`translate(${Margin.left}, ${Margin.top})`}></g>
+    </svg>
+  )
+}
+```
+</div>
+
+
+<div className="slide">
+
+## Gjenomgang av appen
+
+Rask gjennomgang av applikasjonen, selv om det i stor grad ikke er relevant for oppgaveløsningen.
+
+<Image src={architectureOverview} alt="architecture diagram" />
+
+- Brukere kan spille T-Rex spillet fra Chrome
+- Når man dør sendes poengsummen til Next.js backend'en
+  - poengsummen lagres i en database
+  - poengsummen deles med alle spillere over websockets (via en [Soketi server](https://github.com/soketi/soketi))
+- Alle brukere får nye poengsummer i sanntid, som så driver oppdateringer av datavisualiseringene.
+
+</div>
