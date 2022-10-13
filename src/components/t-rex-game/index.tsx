@@ -24,10 +24,17 @@ const TRexGame = () => {
 
   return (
     <>
-      <div className="offline h-[150px]">
-        <div id="main-frame-error" className="interstitial-wrapper">
-          <div id="main-content" className="hidden">
-            <div className="icon icon-offline"></div>
+      <div className="relative">
+        <div className="absolute bottom-0 right-0">
+          <div>⬆️: Jump/Start</div>
+          <div>⬇️: Duck</div>
+        </div>
+
+        <div className="relative offline h-[150px]">
+          <div id="main-frame-error" className="interstitial-wrapper">
+            <div id="main-content" className="hidden">
+              <div className="icon icon-offline"></div>
+            </div>
           </div>
         </div>
       </div>

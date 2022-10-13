@@ -1,10 +1,14 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import TRexGame from "../t-rex-game";
 import Top10Chart from "./1-top-10-chart";
+import Top10ChartProblemDescription from "./1-top-10-chart/problem-descriptions.mdx";
 import HistoryChart from "./2-history-chart";
+import HistoryChartProblemDescription from "./2-history-chart/problem-descriptions.mdx";
 import DistributionChart from "./3-distribution-chart";
+import DistributionChartProblemDescription from "./3-distribution-chart/problem-descriptions.mdx";
 
 export enum TabName {
   Top10 = "top-10",
@@ -56,9 +60,30 @@ const ProblemsPageContent: NextPage = () => {
       </nav>
 
       <div>
-        {tab === TabName.Top10 && <Top10Chart />}
-        {tab === TabName.History && <HistoryChart />}
-        {tab === TabName.Distribution && <DistributionChart />}
+        {tab === TabName.Top10 && (
+          <>
+            <Top10Chart />
+            <div className="markdown-body mt-10">
+              <Top10ChartProblemDescription />
+            </div>
+          </>
+        )}
+        {tab === TabName.History && (
+          <>
+            <HistoryChart />
+            <div className="markdown-body mt-10">
+              <HistoryChartProblemDescription />
+            </div>
+          </>
+        )}
+        {tab === TabName.Distribution && (
+          <>
+            <DistributionChart />
+            <div className="markdown-body mt-10">
+              <DistributionChartProblemDescription />
+            </div>
+          </>
+        )}
       </div>
     </>
   );

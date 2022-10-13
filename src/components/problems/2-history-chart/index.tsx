@@ -60,6 +60,8 @@ const MultiLineChart = ({
   svgWidth: number;
   svgHeight: number;
 }) => {
+  console.log("The data you are working with: ", data);
+
   const id = useId("multi-line-chart");
 
   const width = svgWidth - MARGIN.left - MARGIN.right;
@@ -238,53 +240,28 @@ const Line = ({
     const pathContainer = d3.select(`#${id}`);
 
     /**
-     * Create path generator with smooth curves (rounded edges)
+     * Problem 1:
      */
-    const pathGenerator = d3
-      .line<ScoreWithUser>()
-      .x((_, i) => scales.x(String(i + 1))!)
-      .y((d) => scales.y(d.value))
-      .curve(d3.curveMonotoneX);
+    const pathGenerator = "..."; // Your code goes here
 
     /**
-     * Add, update and remove path element
+     * Problem 1:
      */
     pathContainer
       .selectAll("path")
       .data([data.Score])
       .join(
-        (enter) =>
-          enter
-            .append("path")
-            .attr("fill", "none")
-            .attr("stroke", lineColor)
-            .attr("stroke-width", 1.5)
-            .attr("d", pathGenerator as any)
-            .attr("stroke-dasharray", 4000)
-            .attr("stroke-dashoffset", 4000)
-            .call((_enter) =>
-              _enter
-                .transition()
-                .duration(ANIMATION_DURATION * 3)
-                .attr("stroke-dashoffset", 0)
-            ),
-        (update) =>
-          update
-            .transition()
-            .duration(ANIMATION_DURATION * 2)
-            .attr("stroke-dashoffset", 0)
-            .attrTween("d", function (d) {
-              const previous = d3.select(this).attr("d");
-              const current = pathGenerator(d) ?? "";
-              return interpolatePath(previous, current);
-            }),
-        // .attr("d", pathGenerator as any),
-        (exit) => exit.transition().attr("opacity", 0).remove()
+        (enter) => enter, // Your code goes here
+        (update) => update, // Your code goes here
+        (exit) => exit // Your code goes here
       );
 
+    /**
+     * Circle elements marking each score along the the line (Not part of the exercise)
+     */
     pathContainer
       .selectAll("circle")
-      .data<ScoreWithUser>(data.Score, (_, i) => i) // .data<ScoreWithUser>(data.Score, (d) => (d as ScoreWithUser).id)
+      .data<ScoreWithUser>(data.Score, (_, i) => i)
       .join(
         (enter) =>
           enter

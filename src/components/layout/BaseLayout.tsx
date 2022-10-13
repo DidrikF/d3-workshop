@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-
+import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import AuthStatus from "../auth/AuthStatus";
 import { TabName } from "../problems";
 
@@ -14,6 +14,7 @@ export default function BaseLayout({
   children: React.ReactNode;
 }) {
   const { data: session } = useSession();
+  const [presenterMode, setPresenterMode] = useState(false);
 
   return (
     <>
@@ -26,7 +27,7 @@ export default function BaseLayout({
       </Head>
 
       <div className="flex h-screen relative overflow-auto">
-        <nav className="h-screen sticky top-0 flex flex-col w-72 border-slate-700 border-r-[1px] overflow-y-auto">
+        <nav className="h-screen min-w-[280px] sticky top-0 flex flex-col w-72 border-slate-700 border-r-[1px] overflow-y-auto">
           <div className="p-4 pt-0 border-slate-700 border-b-[1px]">
             <NextLink href="/">
               <a className="inline-flex items-end gap-2 hover:cursor-pointer hover:underline">
@@ -45,6 +46,10 @@ export default function BaseLayout({
             <NavSectionHeading>Material</NavSectionHeading>
             <NavSection>
               <Link href="/material/1-intro">Introduction</Link>
+              <Link href="/material/3-svg">SVG introduction</Link>
+              <Link href="/material/4-d3-intro">D3 introduction</Link>
+              <Link href="/material/5-d3-concepts">D3 concepts</Link>
+              <Link href="/material/6-d3-in-practice">D3 in practice</Link>
               <Link href="/material/10-visx">Visx example</Link>
             </NavSection>
 
@@ -76,12 +81,28 @@ export default function BaseLayout({
           </div>
 
           <div className="p-4">
+            <button
+              className={classNames(
+                "text-white bg-slate-500 px-2 py-1 rounded-md",
+                { "bg-slate-600": presenterMode }
+              )}
+              onClick={() => setPresenterMode((state) => !state)}
+            >
+              Presenter mode: {presenterMode ? "On" : "Off"}
+            </button>
             <AuthStatus />
           </div>
         </nav>
 
         <div className="flex-grow">
-          <main className="max-w-6xl mx-auto p-4">{children}</main>
+          <main
+            className={
+              "max-w-6xl mx-auto p-4 " +
+              (presenterMode ? "presenter-mode-active" : "")
+            }
+          >
+            {children}
+          </main>
         </div>
       </div>
     </>
@@ -107,7 +128,7 @@ const Link: React.FC<{
   const isActive = match ? match(router.asPath) : router.asPath === href;
 
   return (
-    <li>
+    <li className="mt-1">
       {!reload ? (
         <NextLink href={href}>
           <a

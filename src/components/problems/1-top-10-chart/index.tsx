@@ -30,10 +30,7 @@ const Top10Chart = () => {
       <h2 className="mb-6 text-3xl">Top 10 Scores</h2>
       <p>The 10 highest scores any player has achieved</p>
 
-      <div
-        ref={containerRef}
-        className="relative inline w-fill w-[800px] h-[600px]"
-      >
+      <div ref={containerRef} className="relative inline w-[800px] h-[600px]">
         {size && data.length > 0 && (
           <BarChart data={data} svgWidth={size.width} svgHeight={size.height} />
         )}
@@ -53,28 +50,23 @@ const BarChart = ({
   svgWidth: number;
   svgHeight: number;
 }) => {
-  const id = useId("bar-chart");
+  console.log("The data you are working with: ", data);
 
   const width = svgWidth - MARGIN.left - MARGIN.right;
   const height = svgHeight - MARGIN.top - MARGIN.bottom;
 
+  /**
+   * Problem 1
+   */
   const scales: Scales = useMemo(() => {
     return {
-      x: d3
-        .scaleLinear()
-        .domain([0, d3.max(data, (d) => d.value) ?? 0])
-        .range([0, width]),
-      y: d3
-        .scaleBand()
-        .domain(data.map((d) => String(d.id)))
-        .range([height, 0])
-        .padding(0.35),
+      x: d3.scaleLinear(), // Your code goes here. Hint: define the domain and range
+      y: d3.scaleBand(), // Your code goes here. Hint: define the domain, range and padding
     };
   }, [data, width, height]);
 
   return (
     <svg
-      id={id}
       xmlns="http://www.w3.org/2000/svg"
       className="absolute"
       style={{
@@ -107,14 +99,11 @@ const XAxis = ({
 }) => {
   const id = useId("x-axis");
 
+  /**
+   * Problem 2
+   */
   useEffect(() => {
-    const xAxis = d3.axisBottom(xScale);
-
-    d3.select(`#${id}`)
-      .attr("class", "font-mono text-sm")
-      .transition()
-      .duration(ANIMATION_DURATION)
-      .call(xAxis as any);
+    // Your code goes here. Hint: use d3.axisBottom
   }, [id, xScale]);
 
   return (
@@ -141,20 +130,14 @@ const YAxis = ({
 }) => {
   const id = useId("y-axis");
 
+  /**
+   * Problem 3
+   */
   useEffect(() => {
-    const yAxis = d3
-      .axisLeft(yScale)
-      .tickSize(0)
-      .tickFormat((_, index) => getName(data[index]?.user));
-
-    d3.select(`#${id}`)
-      .transition()
-      .duration(ANIMATION_DURATION)
-      .call(yAxis as any)
-
-      .call((axis) =>
-        axis.selectAll("text").attr("class", "font-mono text-lg -translate-x-2")
-      );
+    // Your code goes here.
+    // Hints:
+    // 1. use d3.axisLeft
+    // 2. define the tick labels using: tickFormat((_, index) => getName(data[index]?.user))
   }, [id, yScale, data]);
 
   return (
@@ -169,83 +152,17 @@ const Bars = ({ scales, data }: { scales: Scales; data: ScoreWithUser[] }) => {
   const id = useId("data-container");
 
   useEffect(() => {
-    console.log(data);
-
     const dataContainer = d3.select(`#${id}`);
 
     /**
-     * Append, update and remove bars using data joins
+     * Problem 4 and 5
      */
-    dataContainer
-      .selectAll("rect")
-      .data(data, (d) => (d as ScoreWithUser).id)
-      .join(
-        (enter) =>
-          enter
-            .append("rect")
-            .attr("rx", 2)
-            .attr("fill", (_, i) => interpolateRdYlGn(i / 9)!)
-            .attr("y", (d) => scales.y(String(d.id))!)
-            .attr("height", scales.y.bandwidth())
-            .attr("x", 0)
-            .attr("width", 0)
-            .attr("data-value", (d) => d.value)
-            .call((_enter) =>
-              _enter
-                .transition("grow bar height with chained transitions")
-                .duration(ANIMATION_DURATION)
-                .attr("width", (d) => scales.x(d.value)!)
-            ),
-        (update) =>
-          update
-            .attr("data-value", (d) => d.value)
-            .transition("update bars to match new data")
-            .duration(ANIMATION_DURATION)
-            .attr("fill", (d, i) => interpolateRdYlGn(i / 10)!)
-            .attr("y", (d) => scales.y(String(d.id))!)
-            .attr("height", scales.y.bandwidth())
-            .attr("width", (d) => scales.x(d.value)!),
-        (exit) => exit.transition().attr("opacity", 0).remove()
-      );
+    dataContainer.selectAll("rect"); // Your code goes here
 
     /**
-     * Append, update and remove scores (as text nodes) using data joins
+     * Problem 6 (optional)
      */
-    dataContainer
-      .selectAll("text")
-      .data(data, (d) => (d as ScoreWithUser).id)
-      .join(
-        (enter) =>
-          enter
-            .append("text")
-            .attr(
-              "class",
-              "font-mono text-lg -translate-x-2 fill-white [alignment-baseline:middle]"
-            )
-            .attr("x", 10)
-            .attr(
-              "y",
-              (d) => scales.y(String(d.id))! + scales.y.bandwidth() / 2
-            )
-            .text((d) => d.value)
-            .call((_enter) =>
-              _enter
-                .transition("update score text positions to match new data")
-                .duration(ANIMATION_DURATION)
-                .attr("x", (d) => scales.x(d.value)! + 15)
-            ),
-        (update) =>
-          update
-            .transition("update score text positions to match new data")
-            .duration(ANIMATION_DURATION)
-            .attr("x", (d) => scales.x(d.value)! + 15)
-            .attr(
-              "y",
-              (d) => scales.y(String(d.id))! + scales.y.bandwidth() / 2
-            )
-            .text((d) => d.value),
-        (exit) => exit.transition().attr("opacity", 0).remove()
-      );
+    dataContainer.selectAll("text"); // Your code goes here
   }, [id, data, scales]);
 
   return (
