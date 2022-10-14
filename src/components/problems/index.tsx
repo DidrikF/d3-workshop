@@ -44,7 +44,7 @@ const ProblemsPageContent: NextPage = () => {
 
   return (
     <>
-      <h1 className="mx-auto">Problem sets</h1>
+      <h1>Problem sets</h1>
 
       <TRexGame />
 

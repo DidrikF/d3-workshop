@@ -4,7 +4,9 @@ import architectureOverview from '../../assets/architecture-diagram.png'
 
 <div className="slide">
 
-## D3 i prasis - introduksjon
+# D3 i praksis
+
+## Introduksjon
 
 Nå kan vi:
 - Bygge SVGer
@@ -86,12 +88,16 @@ const Chart = ({data, svgWidth, svgHeight}) => {
 
 Rask gjennomgang av applikasjonen, selv om det i stor grad ikke er relevant for oppgaveløsningen.
 
-<Image src={architectureOverview} alt="architecture diagram" />
+[Workshop appen](https://d3-workshop.vercel.app/)
 
 - Brukere kan spille T-Rex spillet fra Chrome
 - Når man dør sendes poengsummen til Next.js backend'en
   - poengsummen lagres i en database
   - poengsummen deles med alle spillere over websockets (via en [Soketi server](https://github.com/soketi/soketi))
 - Alle brukere får nye poengsummer i sanntid, som så driver oppdateringer av datavisualiseringene.
+
+<Image src={architectureOverview} alt="architecture diagram" />
+
+
 
 </div>

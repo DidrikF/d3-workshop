@@ -29,7 +29,7 @@ const DistributionChart = () => {
   return (
     <div className="flex flex-col items-center">
       <h2 className="mb-4 text-3xl">Score Distribution</h2>
-      <p>Scatter plots of all scores for each player.</p>
+      <p>Scatter plots of all scores of each player.</p>
       <p>The lines marks the mean score of each player.</p>
 
       <div

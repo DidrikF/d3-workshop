@@ -38,7 +38,7 @@ const SolutionsPageContent: NextPage = () => {
 
   return (
     <>
-      <h1 className="mx-auto">Problem sets</h1>
+      <h1>Solutions</h1>
 
       <TRexGame />
 

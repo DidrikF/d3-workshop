@@ -55,12 +55,14 @@ d3.select('path')
 
 <div className="slide">
 
-## Append må vi også vite om
+## `.append()` og `.remove()` og må vi også vite om
 
 ```js
 const selection = d3.selectAll('.box') // selection of elements with the class "box"
 const paragraphs = selection.append('p') // selection of paragraphs appended to each "box"
 paragraphs.text('Hello world')
+
+selection.remove() // removes all "box" elements
 ```
 
 </div>
@@ -167,6 +169,19 @@ d3.selectAll('.data-container rect')
     ,
     (exit) => exit.remove()
   )
+```
+
+Man kan også bruke `.join()` på en enklere måte
+
+```js
+d3.selectAll('.data-container rect')
+  .data(data, (d) => d.key)
+  .join("rect")
+  .attr('x', (d) => getXCoord(d.key))
+  .attr('y', (d) => getYCoord(d.score))
+  .attr('width', (d) => getWidth(d.key))
+  .attr('height', (d) => getHeight(d.score))
+  .attr('fill', 'blue');
 ```
 
 </div>
