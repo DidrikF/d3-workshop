@@ -151,7 +151,6 @@ const YAxis = ({
       .transition()
       .duration(ANIMATION_DURATION)
       .call(yAxis as any)
-
       .call((axis) =>
         axis.selectAll("text").attr("class", "font-mono text-lg -translate-x-2")
       );
